@@ -78,7 +78,18 @@ n <- 9
 quantile = 0.975 # is 95% with 2.5% on both sides of the range
 confidenceInterval = μ + c(-1, 1) * qt(quantile, df=n-1) * σ / sqrt(n)
 ```
+or
+Let p p p be the proportion of people who prefer Coke. Then, we want to test
 
+H0:p=.5 H_0:p=.5 H0​:p=.5 versus Ha:p>.5 H_a:p>.5 Ha​:p>.5. Let X X X be the number out of 4 4 4 that prefer
+
+Coke; assume X∼Binomial(p,.5) X \sim Binomial(p, .5) X∼Binomial(p,.5).
+
+Pvalue=P(X≥3)=choose(4,3)0.530.51+choose(4,4)0.540.50 Pvalue = P(X \geq 3) =  \mathrm{choose}(4,3) 0.5 ^ 3 0.5 ^ 1 +  \mathrm{choose}(4, 4) 0.5 ^4 0.5^0 Pvalue=P(X≥3)=choose(4,3)0.530.51+choose(4,4)0.540.50
+```{r}
+pbinom(2, size = 4, prob = 0.5, lower.tail = FALSE)
+choose(4, 3) * 0.5^4 + choose(4, 4) * 0.5^4
+---
 ```{r}
 # [1] 1077 1123
 ```
@@ -103,7 +114,13 @@ x <- 3
 test <- binom.test(x=x, n=n, alt="greater")
 round(test$p.value,2)
 ```
+or
+Correct
 
+H0:λ=0.01 H_0 : \lambda = 0.01 H0​:λ=0.01 versus Ha:λ<0.01 H_a : \lambda < 0.01 Ha​:λ<0.01. X=11 X = 11 X=11, t=1,787 t=1,787 t=1,787 and assume X∼H0Poisson(0.01×t) X \sim_{H_0} Poisson(0.01 \times t) X∼H0​​Poisson(0.01×t)
+```{r}
+ppois(10, lambda = 0.01 * 1787)
+```
 ```{r}
 # [1] 0.31
 ```
@@ -163,7 +180,17 @@ n_x <- 9 # subjects placebo
 pval <- pt((μ_y - μ_x) / (σ_p * (1 / n_x + 1 / n_y)^.5), df=n_y + n_x -2)
 pval
 ```
-
+or
+```{r}
+n1 <- n2 <- 9
+x1 <- -3 ##treated
+x2 <- 1 ##placebo
+s1 <- 1.5 ##treated
+s2 <- 1.8 ##placebo
+s <- sqrt(((n1 - 1) * s1^2 + (n2 - 1) * s2^2)/(n1 + n2 - 2))
+ts <- (x1 - x2)/(s * sqrt(1/n1 + 1/n2))
+2 * pt(ts, n1 + n2 - 2)
+```
 ```{r}
 # [1] 0.003504
 ```
@@ -187,7 +214,7 @@ Answer: </br>
 No you wouldn't reject.
 
 Explanation: 
-
+No, you would fail to reject. The 95% interval would be wider than the 90% interval. Since 1,078 is in the narrower 90% interval, it would also be in the wider 95% interval. Thus, in either case it's in the interval and so you would fail to reject.
 
 Question 7
 ----------
@@ -242,7 +269,28 @@ pow <- 0.9 #power
 n <- power.t.test(power=pow, delta=μ, sd=σ , sig.level=p, type="one.sample", alt="one.sided")$n
 ceiling(n/10)*10
 ```
+or 
+The hypothesis is H0:μΔ=0 H_0 : \mu_\Delta = 0 H0​:μΔ​=0 versus Ha:μΔ>0 H_a : \mu_\Delta > 0 Ha​:μΔ​>0 where μΔ \mu_\Delta μΔ​ is volume loss (change defined as Baseline - Four Weeks). The test statistics is XˉΔ.04/n \frac{\bar X_\Delta}{.04 / \sqrt{n} } .04/n
 
+​XˉΔ​​ which is rejected if it is larger than Z.95=1.645 Z_{.95} = 1.645 Z.95​=1.645.
+
+We want to calculate
+
+P(XˉΔσΔ/n>1.645 ∣ μΔ=.01)=P(XˉΔ−.01.04/n>1.645−.01.04/n ∣ μΔ=.01)=P(Z>1.645−n/4)=.90 P\left(\frac{\bar X_\Delta}{\sigma_\Delta / \sqrt{n}} > 1.645 ~|~ \mu_\Delta = .01\right) = P\left( \frac{\bar X_\Delta - .01}{.04 / \sqrt{n}} > 1. 645 - \frac{.01}{.04 / \sqrt{n}} ~|~ \mu_\Delta = .01\right) = P(Z > 1.645 - \sqrt{n} / 4) = .90 P(σΔ​/n
+​XˉΔ​​>1.645 ∣ μΔ​=.01)=P(.04/n
+​XˉΔ​−.01​>1.645−.04/n
+​.01​ ∣ μΔ​=.01)=P(Z>1.645−n
+
+​/4)=.90
+
+So we need 1.645−n/4=Z.10=−1.282 1.645 - \sqrt{n} / 4 = Z_{.10} = -1.282 1.645−n
+
+​/4=Z.10​=−1.282 and thus
+
+n=(4∗(1.645+1.282))2 n = ( 4 * (1.645 + 1.282)  )^ 2 n=(4∗(1.645+1.282))2.
+```{r}
+ceiling((4 * (qnorm(0.95) - qnorm(0.1)))^2)
+```
 ```{r}
 # [1] 140
 ```
@@ -265,3 +313,4 @@ Answer: </br>
 You will get larger power.
 
 Explanation: 
+As you require less evidence to reject, i.e. your α \alpha α rate goes up, you will have larger power.
