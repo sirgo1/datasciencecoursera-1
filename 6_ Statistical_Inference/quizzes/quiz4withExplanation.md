@@ -35,10 +35,27 @@ test <- t.test(x = examinations$baseline, y = examinations$week2, alt = "two.sid
 pval <- test$p.value
 round(pval,3)
 ```
-
+OR
+H0​:μd​=0 versus H0:μd≠0 H_0 : \mu_d \neq 0 H0​:μd​​=0 where μd \mu_d μd​ is the mean difference between followup and baseline.
+```{r}
+bl <- c(140, 138, 150, 148, 135)
+fu <- c(132, 135, 151, 146, 130)
+t.test(fu, bl, alternative = "two.sided", paired = TRUE)
+```
+OR
+```{r}
+t.test(fu - bl, alternative = "two.sided")
+```
 ```{r}
 # [1] 0.087
 ```
+
+
+Note the difference if the test were one sided
+```{r}
+t.test(fu, bl, alternative = "less", paired = TRUE)
+````
+
 
 Question 2
 ----------
